@@ -46,7 +46,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
     const [showModal, setShowModal] = useState(false);
     const deemPollIdVoid = useWriteContract();
     const [deemPollIdVoidTxnHash, setDeemPollIdVoidTxnHash] = useState(null);
-    const [durationDays, setDurationDays] = useState(1);
+    const [durationDays, setDurationDays] = useState(0);
     const [durationHours, setDurationHours] = useState(0);
     const [durationMinutes, setDurationMinutes] = useState(0);
     const maxDays = useReadContract({
@@ -58,21 +58,55 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
 
     const maxDurationDays = maxDays.data ? (parseInt(maxDays.data.toString(), 10) / 86400) : 100;
 
+    const computeMin = (details) => {
+        if (!details) return 0;
+
+        const now = Date.now();
+        const endTime = Number(details[2]) * 1000;
+        const diff = endTime - now;
+
+        if (diff <= 0 || details[3]) return { days: "0", hours: "0", minutes: "0" };
+
+        const startTime = Number(details[1]) * 1000;
+        const orginalDuration = endTime - startTime;
+
+        let totalSeconds = Math.floor(orginalDuration / 1000);
+        let days = Math.floor(totalSeconds / (3600 * 24));
+        totalSeconds %= (3600 * 24);
+        let hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        let minutes = Math.floor(totalSeconds / 60);
+
+        return { days, hours, minutes };
+    }
+
+    const minObj = computeMin(pollIdDetails);
+
+    useEffect(() => {
+        if (pollIdDetails) {
+            const min = computeMin(pollIdDetails);
+            setDurationDays(min.days);
+            setDurationHours(min.hours);
+            setDurationMinutes(min.minutes);
+        }
+    }, [pollIdDetails]);
+
     const handleDurationDaysChange = (e) => {
         setDurationDays(parseInt(e.target.value, 10));
         if (parseInt(e.target.value, 10) === maxDurationDays) {
             setDurationHours(0);
             setDurationMinutes(0);
         }
-        if (parseInt(e.target.value, 10) === 0 && durationHours === 0) {
-            setDurationMinutes(1);
+        if (parseInt(e.target.value, 10) === minObj.days && durationHours < minObj.hours) {
+            setDurationHours(minObj.hours);
+            setDurationMinutes(minObj.minutes);
         }
     };
 
     const handleDurationHoursChange = (e) => {
         setDurationHours(parseInt(e.target.value, 10));
-        if (parseInt(e.target.value, 10) === 0 && durationDays === 0) {
-            setDurationMinutes(1);
+        if (parseInt(e.target.value, 10) === minObj.hours && durationDays === minObj.days && durationMinutes < minObj.minutes) {
+            setDurationMinutes(minObj.minutes);
         }
     };
 
@@ -108,8 +142,6 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
 
         return () => clearInterval(interval); // <-- Cleanup on unmount or pollId changes
     }, [pollIdDetails]);
-
-
 
     const handleVote = async (_pollId, _choice) => {
         try {
@@ -214,9 +246,9 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                         "Deem Poll Void"
                                     }
                                 </button>
-                                <div className="accordion mb-3" id="pollDurationAccordion" style={{width: "100%"}}>
-                                    <div className="accordion-item border-0" style={{width: "100%"}}>
-                                        <h2 className="accordion-header" id="headingDuration" style={{width: "100%"}}>
+                                <div className="accordion mb-3" id="pollDurationAccordion" style={{ width: "100%" }}>
+                                    <div className="accordion-item border-0" style={{ width: "100%" }}>
+                                        <h2 className="accordion-header" id="headingDuration" style={{ width: "100%" }}>
                                             <button
                                                 className="btn fw-bold collapsed d-flex align-items-center justify-content-center rounded-5 custom-hover"
                                                 type="button"
@@ -224,9 +256,9 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                                 data-bs-target="#collapseDuration"
                                                 aria-expanded="false"
                                                 aria-controls="collapseDuration"
-                                                style={{width: "100%", backgroundColor: "#9e42f5", color: "white"}}
+                                                style={{ width: "100%", backgroundColor: "#9e42f5", color: "white" }}
                                             >
-                                                New Poll Duration
+                                                Extend Poll Duration
                                             </button>
                                         </h2>
                                         <div
@@ -244,11 +276,12 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                                         type="range"
                                                         id="durationDays"
                                                         className="form-range"
-                                                        min="0"
+                                                        min={minObj.days}
                                                         max={maxDurationDays}
                                                         step="1"
                                                         value={durationDays}
                                                         onChange={handleDurationDaysChange}
+                                                        disabled={minObj.days === "0" || pollIdDetails[3]}
                                                     />
                                                 </div>
                                                 <div className="mb-3">
@@ -259,12 +292,12 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                                         type="range"
                                                         id="durationHours"
                                                         className="form-range"
-                                                        min="0"
+                                                        min={durationDays === minObj.days ? minObj.hours : 0}
                                                         max="23"
                                                         step="1"
                                                         value={durationHours}
                                                         onChange={handleDurationHoursChange}
-                                                        disabled={(durationDays === maxDurationDays)}
+                                                        disabled={(durationDays === maxDurationDays) || (minObj.hours === "0" || pollIdDetails[3])}
                                                     />
                                                 </div>
                                                 <div>
@@ -275,14 +308,24 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                                         type="range"
                                                         id="durationMinutes"
                                                         className="form-range"
-                                                        min={(durationDays === 0 && durationHours === 0) ? "1" : "0"}
+                                                        min={durationDays === minObj.days && durationHours === minObj.hours ? minObj.minutes : 0}
                                                         max="59"
                                                         step="1"
                                                         value={durationMinutes}
                                                         onChange={handleDurationMinutesChange}
-                                                        disabled={(durationDays === maxDurationDays)}
+                                                        disabled={(durationDays === maxDurationDays) || (minObj.minutes === "0" || pollIdDetails[3])}
                                                     />
                                                 </div>
+
+                                                {minObj.days === "0" && minObj.hours === "0" && minObj.minutes === "0" && !pollIdDetails[3] ? (
+                                                    <div className="alert alert-warning mt-3 mb-0 d-flex justify-content-center" role="alert">
+                                                        Cannot extend duration as poll has ended.
+                                                    </div>
+                                                ) : pollIdDetails[3] ? (
+                                                    <div className="alert alert-warning mt-3 mb-0 d-flex justify-content-center" role="alert">
+                                                        Cannot extend duration as poll is deemed void.
+                                                    </div>
+                                                ) : null}
                                             </div>
                                         </div>
                                     </div>
