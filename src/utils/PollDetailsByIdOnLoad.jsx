@@ -46,6 +46,8 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
     const [showModal, setShowModal] = useState(false);
     const deemPollIdVoid = useWriteContract();
     const [deemPollIdVoidTxnHash, setDeemPollIdVoidTxnHash] = useState(null);
+
+    const extendDuration = useWriteContract();
     const [durationDays, setDurationDays] = useState(0);
     const [durationHours, setDurationHours] = useState(0);
     const [durationMinutes, setDurationMinutes] = useState(0);
@@ -55,6 +57,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
         functionName: "maximumDuration",
         chainId: sepolia.id
     });
+    const [extendDurationTxnHash, setExtendDurationTxnHash] = useState(null);
 
     const maxDurationDays = maxDays.data ? (parseInt(maxDays.data.toString(), 10) / 86400) : 100;
 
@@ -113,6 +116,32 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
     const handleDurationMinutesChange = (e) => {
         setDurationMinutes(parseInt(e.target.value, 10));
     };
+
+    const handleExtendDuration = async () => {
+        try {
+            const totalDuration = (durationDays * 24 * 60 * 60) + (durationHours * 60 * 60) + (durationMinutes * 60);
+            const data = await extendDuration.writeContractAsync({
+                address: config.contractAddress,
+                abi: config.contractABI,
+                functionName: "updatePollEndTime",
+                args: [pollId, totalDuration]
+            });
+            setExtendDurationTxnHash(data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const waitForExtendDurationTxn = useWaitForTransactionReceipt({
+        hash: extendDurationTxnHash,
+        query: { enabled: Boolean(extendDurationTxnHash) }
+    });
+
+    useEffect(() => {
+        if (waitForExtendDurationTxn.isSuccess) {
+            refetchPollIdDetails();
+        }
+    }, [waitForExtendDurationTxn.isSuccess, refetchPollIdDetails]);
 
     useEffect(() => {
         if (!pollIdDetails) return; // Don't start if details aren't loaded
@@ -236,7 +265,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                 <h4 className="fw-semibold">Poll Config</h4>
                                 <button className="btn fw-bold rounded-5 px-3 w-100 custom-hover mb-2"
                                     style={{ backgroundColor: "#9e42f5", color: "white" }}
-                                    disabled={deemPollIdVoid.isPending || waitForDeemPollIdVoidTxn.isLoading || pollIdDetails[3]}
+                                    disabled={deemPollIdVoid.isPending || waitForDeemPollIdVoidTxn.isLoading || pollIdDetails[3] || extendDuration.isPending || waitForExtendDurationTxn.isLoading}
                                     onClick={() => handleDeemPollIdVoid(pollId)}>
                                     {deemPollIdVoid.isPending || waitForDeemPollIdVoidTxn.isLoading ?
                                         (<div className="d-flex align-items-center justify-content-center gap-2">
@@ -281,7 +310,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                                         step="1"
                                                         value={durationDays}
                                                         onChange={handleDurationDaysChange}
-                                                        disabled={minObj.days === "0" || pollIdDetails[3]}
+                                                        disabled={minObj.days === "0" || pollIdDetails[3] || extendDuration.isPending || waitForExtendDurationTxn.isLoading || deemPollIdVoid.isPending || waitForDeemPollIdVoidTxn.isLoading}
                                                     />
                                                 </div>
                                                 <div className="mb-3">
@@ -297,7 +326,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                                         step="1"
                                                         value={durationHours}
                                                         onChange={handleDurationHoursChange}
-                                                        disabled={(durationDays === maxDurationDays) || (minObj.hours === "0" || pollIdDetails[3])}
+                                                        disabled={(durationDays === maxDurationDays) || (minObj.hours === "0" || pollIdDetails[3]) || extendDuration.isPending || waitForExtendDurationTxn.isLoading || deemPollIdVoid.isPending || waitForDeemPollIdVoidTxn.isLoading}
                                                     />
                                                 </div>
                                                 <div>
@@ -313,7 +342,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                                         step="1"
                                                         value={durationMinutes}
                                                         onChange={handleDurationMinutesChange}
-                                                        disabled={(durationDays === maxDurationDays) || (minObj.minutes === "0" || pollIdDetails[3])}
+                                                        disabled={(durationDays === maxDurationDays) || (minObj.minutes === "0" || pollIdDetails[3]) || extendDuration.isPending || waitForExtendDurationTxn.isLoading || deemPollIdVoid.isPending || waitForDeemPollIdVoidTxn.isLoading}
                                                     />
                                                 </div>
 
@@ -325,7 +354,20 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                                     <div className="alert alert-warning mt-3 mb-0 d-flex justify-content-center" role="alert">
                                                         Cannot extend duration as poll is deemed void.
                                                     </div>
-                                                ) : null}
+                                                ) : <div className="d-flex justify-content-center mt-3 mb-0">
+                                                    <button className="btn rounded-5 fw-bold custom-hover px-4"
+                                                        style={{ backgroundColor: "#9e42f5", color: "white" }}
+                                                        onClick={handleExtendDuration}
+                                                        disabled={extendDuration.isPending || waitForExtendDurationTxn.isLoading || deemPollIdVoid.isPending || waitForDeemPollIdVoidTxn.isLoading || pollIdDetails[3]}>
+                                                        {extendDuration.isPending || waitForExtendDurationTxn.isLoading ?
+                                                            (<div className="d-flex align-items-center justify-content-center gap-2">
+                                                                <span>Extend</span>
+                                                                <div className="spinner-border spinner-border-sm text-light" role="status" />
+                                                            </div>) :
+                                                            "Extend"
+                                                        }
+                                                    </button>
+                                                </div>}
                                             </div>
                                         </div>
                                     </div>
@@ -380,9 +422,6 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                     Poll is deemed void
                 </div>
             ) : null}
-            {/* <div className="d-flex align-items-center justify-content-end w-100">
-                <div className="bg-info" style={{ width: "5%" }}> hi</div>
-            </div> */}
         </div>
 
     );
