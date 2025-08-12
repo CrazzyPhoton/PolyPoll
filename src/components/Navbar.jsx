@@ -42,7 +42,7 @@ export function Navbar() {
                         </li>
                         <li className="nav-item mx-2">
                             <NavLink
-                                to="/about"
+                                to="/my-polls"
                                 className={({ isActive }) =>
                                     "nav-link fw-medium nav-link-custom" + (isActive ? " text-white" : " text-white opacity-50")
                                 }

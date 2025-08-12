@@ -1,5 +1,5 @@
 export const config = {
-	contractAddress: "0x8C87CC3458da2e35D0AFC81391EACcA947601378",
+	contractAddress: "0xC5A14f695fD8E691f1D27D5477b4a4c850E5ea16",
 	contractABI: [
 		{
 			"inputs": [],
@@ -115,6 +115,22 @@ export const config = {
 			"type": "error"
 		},
 		{
+			"inputs": [
+				{
+					"internalType": "uint32",
+					"name": "newDurationAdded",
+					"type": "uint32"
+				},
+				{
+					"internalType": "uint32",
+					"name": "maximumDurationAllowed",
+					"type": "uint32"
+				}
+			],
+			"name": "NewDurationOutOfBounds",
+			"type": "error"
+		},
+		{
 			"inputs": [],
 			"name": "NonExistentPollId",
 			"type": "error"
@@ -129,6 +145,11 @@ export const config = {
 		{
 			"inputs": [],
 			"name": "PollCreationPaused",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "PollDurationCannotBeShortened",
 			"type": "error"
 		},
 		{

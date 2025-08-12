@@ -3,6 +3,7 @@ import { useAccount, useReadContract, useWriteContract, useWaitForTransactionRec
 import { config } from "../utils/config";
 import { sepolia } from "viem/chains";
 import { PollDetailsById } from "../utils/PollDetailsById";
+import { useNavigate } from 'react-router-dom';
 
 export const Content = () => {
 
@@ -132,6 +133,7 @@ export const Content = () => {
     const [isTimeLeft, setIsTimeLeft] = useState(false);
     const modalRef = useRef(null);
     const modalInstance = useRef(null);
+    const navigate = useNavigate();
     const [clicked, setClicked] = useState(null);
     const sendVoteOnModalTx = useWriteContract();
     let [voteTxHash, setVoteTxHash] = useState(null);
@@ -331,7 +333,7 @@ export const Content = () => {
                         <div className="accordion-item border-0">
                             <h2 className="accordion-header" id="headingDuration">
                                 <button
-                                    className="accordion-button fw-semibold collapsed ps-0 py-2 bg-light"
+                                    className="accordion-button fw-semibold collapsed ps-0 py-2 bg-light shadow-none"
                                     type="button"
                                     data-bs-toggle="collapse"
                                     data-bs-target="#collapseDuration"
@@ -465,7 +467,7 @@ export const Content = () => {
                         <div className="modal-content">
                             <div className="modal-header bg-light">
                                 <h4 className="modal-title fw-bold" id="pollSuccessModalLabel">Poll Created</h4>
-                                <button onClick={handleModalClose} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button onClick={handleModalClose} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" disabled={sendVoteOnModalTx.isPending || waitForVoteTx.isLoading}></button>
                             </div>
                             <div className="modal-body d-flex flex-column align-items-center bg-light">
                                 <h5 className="text-center fw-bold mb-3 mt-2">{pollsCreated}. {question}</h5>
@@ -503,8 +505,11 @@ export const Content = () => {
                                         )}
                                 </div>
                             </div>
-                            <div className="modal-footer bg-light d-flex align-items-center justify-content-center">
-                                <button onClick={handleModalClose} type="button" className="btn fw-bold custom-hover rounded-5 w-25" data-bs-dismiss="modal" style={{ backgroundColor: "#9e42f5", color: "white" }}>Close</button>
+                            <div className="modal-footer bg-light d-flex align-items-center justify-content-evenly">
+                                <button onClick={handleModalClose} type="button" className="btn fw-bold custom-hover rounded-5 w-25" data-bs-dismiss="modal" style={{ backgroundColor: "#9e42f5", color: "white" }} disabled={sendVoteOnModalTx.isPending || waitForVoteTx.isLoading}>Close</button>
+                                <button onClick={() => {navigate(`/all-polls?pollId=${pollsCreated}`); handleModalClose();}} type="button" className="btn fw-bold custom-hover rounded-5 w-auto px-4" style={{ backgroundColor: "#9e42f5", color: "white" }} disabled={sendVoteOnModalTx.isPending || waitForVoteTx.isLoading}>
+                                    View On All Polls
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -535,11 +540,11 @@ export const Content = () => {
                             ))
                         )}
                     </div>
-                    <button className="carousel-control-prev shadow-lg rounded-start-5" type="button" data-bs-target="#start-voting" data-bs-slide="prev">
+                    <button className="carousel-control-prev shadow-lg rounded-start-5 bg-light" type="button" data-bs-target="#start-voting" data-bs-slide="prev">
                         <span className="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span className="visually-hidden">Previous</span>
                     </button>
-                    <button className="carousel-control-next shadow-lg rounded-end-5" type="button" data-bs-target="#start-voting" data-bs-slide="next">
+                    <button className="carousel-control-next shadow-lg rounded-end-5 bg-light" type="button" data-bs-target="#start-voting" data-bs-slide="next">
                         <span className="carousel-control-next-icon" aria-hidden="true"></span>
                         <span className="visually-hidden">Next</span>
                     </button>

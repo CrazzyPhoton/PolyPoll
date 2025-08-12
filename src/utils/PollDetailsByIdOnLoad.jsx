@@ -58,6 +58,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
         chainId: sepolia.id
     });
     const [extendDurationTxnHash, setExtendDurationTxnHash] = useState(null);
+    const [buttonText, setButtonText] = useState("Share");
 
     const maxDurationDays = maxDays.data ? (parseInt(maxDays.data.toString(), 10) / 86400) : 100;
 
@@ -234,6 +235,18 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
         }
     }, [waitForDeemPollIdVoidTxn.isSuccess, refetchPollIdDetails]);
 
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(`http://localhost:5173/all-polls?pollId=${pollId}`);  // Copies current URL; replace with any link string.
+            setButtonText("Link Copied");
+            setTimeout(() => {
+                setButtonText("Share");
+            }, 1000);
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+        }
+    };
+
     if (isLoading || !pollIdDetails) {
         return (
             <div className="container-fluid d-flex align-items-center justify-content-center gap-2">
@@ -257,7 +270,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                 <button className="btn p-0 rounded-5 share-button d-flex align-items-center justify-content-center p-2" style={{ width: "3%" }} onClick={() => setShowModal(true)}> <BsThreeDotsVertical /></button>
                 <PollConfigModal show={showModal} onClose={() => setShowModal(false)}>
                     <h4 className="px-4 fw-bold">{pollId}. {pollIdDetails[4]}</h4>
-                    <button className="btn mt-3 mb-1 px-3 rounded-5 custom-hover fw-bold" style={{ backgroundColor: "#9e42f5", color: "white" }}>Copy link</button>
+                    <button className="btn mt-3 mb-1 px-3 rounded-5 custom-hover fw-bold" style={{ backgroundColor: "#9e42f5", color: "white" }} onClick={handleCopy} disabled={buttonText === "Link Copied"}>{buttonText}</button>
                     {(connectedAccount.address === pollIdDetails[0] || ownerAddress === connectedAccount.address) && (
                         <>
                             <div className="w-100 my-3" style={{ height: "1px", backgroundColor: "rgba(0, 0, 0, 0.1)" }}></div>
@@ -275,9 +288,9 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                         "Deem Poll Void"
                                     }
                                 </button>
-                                <div className="accordion mb-3" id="pollDurationAccordion" style={{ width: "100%" }}>
+                                <div className="accordion" id="pollDurationAccordion" style={{ width: "100%" }}>
                                     <div className="accordion-item border-0" style={{ width: "100%" }}>
-                                        <h2 className="accordion-header" id="headingDuration" style={{ width: "100%" }}>
+                                        <h2 className="accordion-header bg-light" id="headingDuration" style={{ width: "100%" }}>
                                             <button
                                                 className="btn fw-bold collapsed d-flex align-items-center justify-content-center rounded-5 custom-hover"
                                                 type="button"
@@ -345,7 +358,6 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                                         disabled={(durationDays === maxDurationDays) || (minObj.minutes === "0" || pollIdDetails[3]) || extendDuration.isPending || waitForExtendDurationTxn.isLoading || deemPollIdVoid.isPending || waitForDeemPollIdVoidTxn.isLoading}
                                                     />
                                                 </div>
-
                                                 {minObj.days === "0" && minObj.hours === "0" && minObj.minutes === "0" && !pollIdDetails[3] ? (
                                                     <div className="alert alert-warning mt-3 mb-0 d-flex justify-content-center" role="alert">
                                                         Cannot extend duration as poll has ended.
@@ -361,7 +373,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                                                         disabled={extendDuration.isPending || waitForExtendDurationTxn.isLoading || deemPollIdVoid.isPending || waitForDeemPollIdVoidTxn.isLoading || pollIdDetails[3]}>
                                                         {extendDuration.isPending || waitForExtendDurationTxn.isLoading ?
                                                             (<div className="d-flex align-items-center justify-content-center gap-2">
-                                                                <span>Extend</span>
+                                                                <span>Extending duration</span>
                                                                 <div className="spinner-border spinner-border-sm text-light" role="status" />
                                                             </div>) :
                                                             "Extend"
