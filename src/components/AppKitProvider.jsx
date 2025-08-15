@@ -16,7 +16,7 @@ const projectId = '981319680ad5a8fa20e2b994f4b6b6ba'
 const metadata = {
   name: 'P1',
   description: 'AppKit Example',
-  url: 'https://reown.com/appkit', // origin must match your domain & subdomain
+  url: 'http://localhost:5173/', // origin must match your domain & subdomain
   icons: ['https://assets.reown.com/reown-profile-pic.png']
 }
 

@@ -116,13 +116,13 @@ export const PollDetailsById = ({ pollId }) => {
 
     return (
         <div id={pollId} className="container-fluid d-flex flex-column align-items-center justify-content-center">
-            <h5 className="fw-bold mb-4">
+            <h5 className="fw-bold text-center text-wrap w-75 px-3 mb-4">
                 {pollId}. {pollIdDetails[4]}
             </h5>
-            <div className="btn-group-vertical gap-2" style={{ width: "45%" }} role="group" aria-label="Vertical button group">
+            <div className="btn-group-vertical gap-2" style={{ width: "65%" }} role="group" aria-label="Vertical button group">
                 {Array.from({ length: pollIdDetails[5].length }).map((_, index) => (
                     <button key={index}
-                        className="btn w-100 fw-bold p-2 my-2 rounded-5 custom-hover"
+                        className="btn w-100 fw-bold p-2 my-2 rounded-5 custom-hover text-center text-wrap"
                         style={{ backgroundColor: "#9e42f5", color: "white" }}
                         onClick={() => handleVote(pollId, index)}
                         disabled={connectedAccount.isDisconnected || !pollTimeLeft || castVote.isPending || waitForVoteTxn.isLoading || hasAddressVoted || pollIdDetails[3]}>
@@ -153,7 +153,7 @@ export const PollDetailsById = ({ pollId }) => {
                     Poll ended
                 </div>
             ) : connectedAccount.isDisconnected && !pollIdDetails[3] ? (
-                <div className="mt-3 fw-semibold">
+                <div className="mt-3 fw-semibold text-center text-wrap w-75">
                     Please connect your wallet to participate in the poll
                 </div>
             ) : pollIdDetails[3] ? (

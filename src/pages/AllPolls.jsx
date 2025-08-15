@@ -13,7 +13,7 @@ export const AllPolls = () => {
     const [loadedPollId, setLoadedPollId] = useState(null);
 
     const pollsPerPage = 10;
-    const maxPageButtons = 5;
+    const maxPageButtons = 4;
 
     const { data: _pollsCreated } = useReadContract({
         address: config.contractAddress,
@@ -120,34 +120,38 @@ export const AllPolls = () => {
             <div ref={paginationRef} className="w-75 bg-light text-center display-4 fw-bold mb-5 py-3 rounded-5 border border-2 border-black">
                 All Polls
             </div>
-            <div className="d-flex align-items-center justify-content-center rounded-5 border border-2 border-black bg-light gap-3 p-3 mb-5 w-75">
-                <button
-                    className="btn fw-bold rounded-5 p-3 custom-hover"
-                    style={{ backgroundColor: "#9e42f5", color: "white" }}
-                    onClick={() => handleSetPage(1)}
-                    disabled={page === 1}
-                >
-                    {"First"}
-                </button>
-                <button className="btn fw-bold rounded-5 p-3 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white" }} onClick={() => handleSetPage(page - 1)} disabled={page === 1}>
-                    {"<<"}
-                </button>
-                {visiblePages.map((p) => (
-                    <button key={p} className="btn fw-bold rounded-5 p-3 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white", outline: page === p ? "5px solid black" : "none" }} onClick={() => handleSetPage(p)}>
-                        {p}
+            <div className="d-flex rounded-5 border border-2 border-black bg-light p-3 mb-5">
+                <div className="btn-group ">
+                    <button
+                        className="btn fw-bold rounded-5 custom-hover d-flex align-items-center mx-1 p-sm-3 p-2"
+                        type="button"
+                        style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                        onClick={() => handleSetPage(1)}
+                        disabled={page === 1}
+                    >
+                        {"First"}
                     </button>
-                ))}
-                <button className="btn fw-bold rounded-5 p-3 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white" }} onClick={() => handleSetPage(page + 1)} disabled={page === totalPages}>
-                    {">>"}
-                </button>
-                <button
-                    className="btn fw-bold rounded-5 p-3 custom-hover"
-                    style={{ backgroundColor: "#9e42f5", color: "white" }}
-                    onClick={() => handleSetPage(totalPages)}
-                    disabled={page === totalPages}
-                >
-                    {"Last"}
-                </button>
+                    <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page - 1)} disabled={page === 1}>
+                        {"<<"}
+                    </button>
+                    {visiblePages.map((p) => (
+                        <button key={p} type="button" className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0", outline: page == p ? "4px solid black" : "none" }} onClick={() => handleSetPage(p)}>
+                            {p}
+                        </button>
+                    ))}
+                    <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page + 1)} disabled={page === totalPages}>
+                        {">>"}
+                    </button>
+                    <button
+                        className="btn fw-bold rounded-end-5 custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2"
+                        type="button"
+                        style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                        onClick={() => handleSetPage(totalPages)}
+                        disabled={page === totalPages}
+                    >
+                        {"Last"}
+                    </button>
+                </div>
             </div>
             <div className="list-group h-auto w-75 gap-5 mb-4">
                 {pollIds.map((pollId) => (
@@ -160,34 +164,38 @@ export const AllPolls = () => {
                     </div>
                 ))}
             </div>
-            <div className="d-flex align-items-center justify-content-center rounded-5 border border-2 border-black bg-light gap-3 p-3 mt-4 w-75">
-                <button
-                    className="btn fw-bold rounded-5 p-3 custom-hover"
-                    style={{ backgroundColor: "#9e42f5", color: "white" }}
-                    onClick={() => handleSetPage(1)}
-                    disabled={page === 1}
-                >
-                    {"First"}
-                </button>
-                <button className="btn fw-bold rounded-5 p-3 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white" }} onClick={() => handleSetPage(page - 1)} disabled={page === 1}>
-                    {"<<"}
-                </button>
-                {visiblePages.map((p) => (
-                    <button key={p} className="btn fw-bold rounded-5 p-3 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white", outline: page === p ? "5px solid black" : "none" }} onClick={() => handleSetPage(p)}>
-                        {p}
+            <div className="d-flex rounded-5 border border-2 border-black bg-light p-3 mt-4">
+                <div className="btn-group">
+                    <button
+                        className="btn fw-bold rounded-5 custom-hover d-flex align-items-center mx-1 p-sm-3 p-2"
+                        type="button"
+                        style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                        onClick={() => handleSetPage(1)}
+                        disabled={page === 1}
+                    >
+                        {"First"}
                     </button>
-                ))}
-                <button className="btn fw-bold rounded-5 p-3 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white" }} onClick={() => handleSetPage(page + 1)} disabled={page === totalPages}>
-                    {">>"}
-                </button>
-                <button
-                    className="btn fw-bold rounded-5 p-3 custom-hover"
-                    style={{ backgroundColor: "#9e42f5", color: "white" }}
-                    onClick={() => handleSetPage(totalPages)}
-                    disabled={page === totalPages}
-                >
-                    {"Last"}
-                </button>
+                    <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page - 1)} disabled={page === 1}>
+                        {"<<"}
+                    </button>
+                    {visiblePages.map((p) => (
+                        <button key={p} type="button" className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0", outline: page == p ? "4px solid black" : "none" }} onClick={() => handleSetPage(p)}>
+                            {p}
+                        </button>
+                    ))}
+                    <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page + 1)} disabled={page === totalPages}>
+                        {">>"}
+                    </button>
+                    <button
+                        className="btn fw-bold rounded-end-5 custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2"
+                        type="button"
+                        style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                        onClick={() => handleSetPage(totalPages)}
+                        disabled={page === totalPages}
+                    >
+                        {"Last"}
+                    </button>
+                </div>
             </div>
         </div>
     );

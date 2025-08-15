@@ -267,7 +267,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
     return (
         <div id={pollId} className="container-fluid d-flex flex-column align-items-center justify-content-center">
             <div className="d-flex align-items-center justify-content-end w-100">
-                <button className="btn p-0 rounded-5 share-button d-flex align-items-center justify-content-center p-2" style={{ width: "3%" }} onClick={() => setShowModal(true)}> <BsThreeDotsVertical /></button>
+                <button className="btn rounded-5 share-button d-flex align-items-center justify-content-center mb-md-0 mb-3 p-2" onClick={() => setShowModal(true)}> <BsThreeDotsVertical /></button>
                 <PollConfigModal show={showModal} onClose={() => setShowModal(false)}>
                     <h4 className="px-4 fw-bold">{pollId}. {pollIdDetails[4]}</h4>
                     <button className="btn mt-3 mb-1 px-3 rounded-5 custom-hover fw-bold" style={{ backgroundColor: "#9e42f5", color: "white" }} onClick={handleCopy} disabled={buttonText === "Link Copied"}>{buttonText}</button>
@@ -389,10 +389,10 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                     )}
                 </PollConfigModal>
             </div>
-            <h5 className="fw-bold mb-4">
+            <h5 className="fw-bold mb-4 text-center">
                 {pollId}. {pollIdDetails[4]}
             </h5>
-            <div className="btn-group-vertical gap-2" style={{ width: "45%" }} role="group" aria-label="Vertical button group">
+            <div className="btn-group-vertical gap-2" style={{ width: "75%" }} role="group" aria-label="Vertical button group">
                 {Array.from({ length: pollIdDetails[5].length }).map((_, index) => (
                     <button key={index}
                         className="btn w-100 fw-bold p-2 my-2 rounded-5 custom-hover"
@@ -426,7 +426,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                     Poll ended
                 </div>
             ) : connectedAccount.isDisconnected && !pollIdDetails[3] ? (
-                <div className="mt-3 fw-semibold">
+                <div className="mt-3 fw-semibold text-center">
                     Please connect your wallet to participate in the poll
                 </div>
             ) : pollIdDetails[3] ? (

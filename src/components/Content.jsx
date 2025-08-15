@@ -282,38 +282,38 @@ export const Content = () => {
 
     return (
         <div className="container-fluid d-flex flex-column align-items-center gap-5 vh-150 bg-info-subtle">
-            <h1 className="text-center fw-bolder display-2 mt-5">Polls with the security of blockchain.</h1>
-            <div className="container-fluid d-flex align-items-start justify-content-between mb-5 mx-4" style={{ height: "55vh" }}>
-                <div className="container-fluid d-flex flex-column align-items-center justify-content-center pt-4 pb-5 bg-light rounded-5 border border-2 border-black shadow-lg me-5" style={{ height: "55vh", width: "70vh" }}>
-                    <h4 className="fw-semibold display-6 p-0 mb-3">Start a poll</h4>
+            <h1 className="text-center fw-bolder display-2 mt-5 mb-4">Polls with the security of blockchain.</h1>
+            <div className="container-fluid d-flex flex-lg-row align-items-lg-start justify-content-lg-between mb-5 mx-5 flex-column align-items-center">
+                <div className="container-fluid d-flex flex-column align-items-center justify-content-center pt-4 pb-4 bg-light rounded-5 border border-2 border-black shadow-lg mb-lg-0 mb-5 mx-5">
+                    <h4 className="d-flex align-items-center fw-semibold display-6 p-0 mb-3">Start a poll</h4>
                     <p className="text-center text-wrap text-body-secondary m-0 py-0 px-5 fs-5">
                         Create polls as per your convenience,
                         make polls as short as 1 min and as long
                         as {maxDurationDays} days with up to {maxChoices} choices!
                     </p>
-                    <a href="#create-poll">
-                        <button className="btn rounded-5 fw-semibold py-3 fs-5 custom-hover mt-3"
+                    <a href="#create-poll" className="mt-4 mb-3">
+                        <button className="btn rounded-5 fw-semibold py-3 fs-5 custom-hover"
                             style={{ backgroundColor: "#9e42f5", color: "white", width: "150px" }}>
                             Create Poll
                         </button>
                     </a>
                 </div>
-                <div className="container-fluid d-flex flex-column align-items-center justify-content-center pt-4 pb-5 bg-light rounded-5 border border-2 border-black shadow-lg ms-5" style={{ height: "55vh", width: "70vh" }}>
+                <div className="container-fluid d-flex flex-column align-items-center justify-content-center pt-4 pb-4 bg-light rounded-5 border border-2 border-black shadow-lg mt-lg-0 mt-5 mx-5">
                     <h4 className="fw-semibold display-6 p-0 mb-3">Vote for a poll</h4>
                     <p className="text-center text-wrap text-body-secondary m-0 py-0 px-5 fs-5">
                         Cast your vote for polls created by users.
                         Browse active polls, review choices,
-                        and make your voice count on the blockchain!
+                        and make your voice count.
                     </p>
-                    <a href="#start-voting">
-                        <button className="btn rounded-5 fw-semibold py-3 fs-5 custom-hover mt-3"
+                    <a href="#start-voting" className="mt-4 mb-3">
+                        <button className="btn rounded-5 fw-semibold py-3 fs-5 custom-hover"
                             style={{ backgroundColor: "#9e42f5", color: "white", width: "150px" }}>
                             Start voting
                         </button>
                     </a>
                 </div>
             </div>
-            <div id="create-poll" className="container-fluid d-flex flex-column align-items-center justify-content-start my-5 py-4 bg-light rounded-5 border border-2 border-black shadow-lg" style={{ height: "auto", width: "73vw" }}>
+            <div id="create-poll" className="container-fluid d-flex flex-column align-items-center justify-content-start mb-5 py-4 bg-light rounded-5 border border-2 border-black shadow-lg" style={{ height: "auto", width: "89vw" }}>
                 <h1 className="fw-medium fs-1 text-center mb-3 mt-1">Create Poll</h1>
                 <form onSubmit={handleSubmit} style={{ width: "85%" }}>
                     <div className="mb-3">
@@ -515,11 +515,11 @@ export const Content = () => {
                     </div>
                 </div>
             </div>
-            <div className="container-fluid d-flex align-items-center justify-content-center my-5" style={{ height: "130vh" }}>
+            <div className="container-fluid d-flex align-items-center justify-content-center mb-5" style={{height: "130vh"}}>
                 <div id="start-voting" className="carousel slide container-fluid d-flex flex-column align-items-center justify-content-start pt-4 bg-light rounded-5 border border-2 border-black shadow-lg"
                     data-bs-theme="dark"
                     data-bs-ride="carousel"
-                    style={{ height: "100%", width: "73vw" }}>
+                    style={{ height: "100%", width: "89vw" }}>
                     <h1 className="fw-semibold text-center mt-1 mb-5">Cast Vote</h1>
                     <div className="carousel-inner" style={{ height: "100%", width: "100%" }}>
                         {uniqueRandomIntegers.length === 0 ? (
