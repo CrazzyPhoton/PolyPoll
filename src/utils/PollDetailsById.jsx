@@ -127,7 +127,7 @@ export const PollDetailsById = ({ pollId }) => {
                         onClick={() => handleVote(pollId, index)}
                         disabled={connectedAccount.isDisconnected || !pollTimeLeft || castVote.isPending || waitForVoteTxn.isLoading || hasAddressVoted || pollIdDetails[3]}>
                         {(castVote.isPending && clickedChoice[index]) || (waitForVoteTxn.isLoading && clickedChoice[index]) ? (
-                            <div className="d-flex align-items-center justify-content-center gap-2">
+                            <div className="d-flex flex-sm-row align-items-center justify-content-center gap-2 flex-column">
                                 <span>{pollIdDetails[5][index]}</span>
                                 <div className="spinner-border spinner-border-sm text-light" role="status" />
                             </div>

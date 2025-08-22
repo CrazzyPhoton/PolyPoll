@@ -36,11 +36,14 @@ createAppKit({
   networks,
   projectId,
   metadata,
+  enableWalletGuide: false,
   features: {
-    analytics: true // Optional - defaults to your Cloud configuration
+    analytics: true, // Optional - defaults to your Cloud configuration
+    connectMethodsOrder: ["wallet"]
   },
   themeVariables: {
-    "--w3m-accent": "#9e42f5"
+    "--w3m-accent": "#9e42f5",
+    "--w3m-z-index": 9999
   }
 })
 

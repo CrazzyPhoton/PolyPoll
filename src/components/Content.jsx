@@ -313,7 +313,7 @@ export const Content = () => {
                     </a>
                 </div>
             </div>
-            <div id="create-poll" className="container-fluid d-flex flex-column align-items-center justify-content-start mb-5 py-4 bg-light rounded-5 border border-2 border-black shadow-lg" style={{ height: "auto", width: "89vw" }}>
+            <div id="create-poll" className="container-fluid d-flex flex-column align-items-center justify-content-start mb-5 py-4 bg-light rounded-5 border border-2 border-black shadow-lg" style={{ height: "auto", width: "89vw", scrollMarginTop: "115px" }}>
                 <h1 className="fw-medium fs-1 text-center mb-3 mt-1">Create Poll</h1>
                 <form onSubmit={handleSubmit} style={{ width: "85%" }}>
                     <div className="mb-3">
@@ -519,7 +519,7 @@ export const Content = () => {
                 <div id="start-voting" className="carousel slide container-fluid d-flex flex-column align-items-center justify-content-start pt-4 bg-light rounded-5 border border-2 border-black shadow-lg"
                     data-bs-theme="dark"
                     data-bs-ride="carousel"
-                    style={{ height: "100%", width: "89vw" }}>
+                    style={{ height: "100%", width: "89vw", scrollMarginTop: "115px" }}>
                     <h1 className="fw-semibold text-center mt-1 mb-5">Cast Vote</h1>
                     <div className="carousel-inner" style={{ height: "100%", width: "100%" }}>
                         {uniqueRandomIntegers.length === 0 ? (
