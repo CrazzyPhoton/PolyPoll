@@ -79,10 +79,16 @@ export const AllPolls = () => {
     const account = useAccount();
 
     const handleVotedPollsClick = () => {
+        if (!isVotedPollsActive) {
+            setIsNotVotedPollsActive(false)
+        }
         setIsVotedPollsActive(!isVotedPollsActive);
     };
 
     const handleNotVotedPollsClick = () => {
+        if (!isNotVotedPollsActive) {
+            setIsVotedPollsActive(false)
+        }
         setIsNotVotedPollsActive(!isNotVotedPollsActive);
     };
 
