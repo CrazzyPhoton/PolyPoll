@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useReadContract } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import { config } from "../utils/config";
 import { sepolia } from "viem/chains";
 import { PollDetailsByIdOnLoad } from "../utils/PollDetailsByIdOnLoad";
@@ -74,6 +74,18 @@ export const AllPolls = () => {
         }
     }, [page]);
 
+    const [isVotedPollsActive, setIsVotedPollsActive] = useState(false);
+    const [isNotVotedPollsActive, setIsNotVotedPollsActive] = useState(false);
+    const account = useAccount();
+
+    const handleVotedPollsClick = () => {
+        setIsVotedPollsActive(!isVotedPollsActive);
+    };
+
+    const handleNotVotedPollsClick = () => {
+        setIsNotVotedPollsActive(!isNotVotedPollsActive);
+    };
+
     // LOADING UI
     if (!_pollsCreated) {
         return (
@@ -117,11 +129,45 @@ export const AllPolls = () => {
 
     return (
         <div id="all-polls" className="container-fluid d-flex flex-column align-items-center justify-content-start bg-info-subtle py-5 px-0 h-auto">
-            <div ref={paginationRef} className="w-75 bg-light text-center display-4 fw-bold mb-5 py-3 rounded-5 border border-2 border-black">
+            <div ref={paginationRef} className="d-flex flex-column gap-4 align-items-center justify-content-center w-75 bg-light text-center display-4 fw-bold mb-5 py-3 rounded-5 border border-2 border-black">
                 All Polls
+                {account.isConnected &&
+                    <div className="btn-group d-flex flex-lg-row flex-column w-75 mt-3 mb-3 gap-4">
+                        <button
+                            id="votedPolls"
+                            className="btn rounded-5 fw-bold"
+                            type="button"
+                            style={{
+                                width: "100%",
+                                backgroundColor: isVotedPollsActive ? "#9e42f5" : "transparent",
+                                color: isVotedPollsActive ? "white" : "black",
+                                border: isVotedPollsActive ? "2px solid #9e42f5" : "2px solid black",
+                                // boxShadow: isVotedPollsActive ? "" : "0px 3px 3px 0px grey"
+                            }}
+                            onClick={handleVotedPollsClick}
+                        >
+                            Voted Polls
+                        </button>
+                        <button
+                            id="notVotedPolls"
+                            className="btn rounded-5 fw-bold"
+                            type="button"
+                            style={{
+                                width: "100%",
+                                backgroundColor: isNotVotedPollsActive ? "#9e42f5" : "transparent",
+                                color: isNotVotedPollsActive ? "white" : "black",
+                                border: isNotVotedPollsActive ? "2px solid #9e42f5" : "2px solid black",
+                                // boxShadow: isNotVotedPollsActive ? "" : "0px 3px 3px 0px grey"
+                            }}
+                            onClick={handleNotVotedPollsClick}
+                        >
+                            Not Voted Polls
+                        </button>
+                    </div>
+                }
             </div>
             <div className="d-flex rounded-5 border border-2 border-black bg-light p-3 mb-5">
-                <div className="btn-group ">
+                <div className="btn-group">
                     <button
                         className="btn fw-bold rounded-5 custom-hover d-flex align-items-center mx-1 p-sm-3 p-2"
                         type="button"
