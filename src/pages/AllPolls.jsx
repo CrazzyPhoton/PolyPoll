@@ -135,7 +135,7 @@ export const AllPolls = () => {
                         {"<<"}
                     </button>
                     {visiblePages.map((p) => (
-                        <button key={p} type="button" className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0", outline: page == p ? "4px solid black" : "none" }} onClick={() => handleSetPage(p)}>
+                        <button key={p} type="button" className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white", border: "0", outline: page == p ? "4px solid black" : "none" }} onClick={() => handleSetPage(p)}>
                             {p}
                         </button>
                     ))}
@@ -179,7 +179,7 @@ export const AllPolls = () => {
                         {"<<"}
                     </button>
                     {visiblePages.map((p) => (
-                        <button key={p} type="button" className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0", outline: page == p ? "4px solid black" : "none" }} onClick={() => handleSetPage(p)}>
+                        <button key={p} type="button" className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white", border: "0", outline: page == p ? "4px solid black" : "none" }} onClick={() => handleSetPage(p)}>
                             {p}
                         </button>
                     ))}

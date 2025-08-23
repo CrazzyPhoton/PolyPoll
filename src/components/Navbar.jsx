@@ -56,7 +56,7 @@ export function Navbar() {
                     </div>
                     <div className="mt-lg-0 mt-1 ms-lg-5 ms-0 d-flex justify-content-center justify-content-lg-start flex-fill">
                         <form className="d-flex" role="search" onSubmit={handleSearch}>
-                            <input className="form-control me-2 focus-ring focus-ring-dark" type="search" placeholder="Enter Poll ID" aria-label="Search" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
+                            <input className="form-control me-2 focus-ring focus-ring-light" type="search" placeholder="Enter Poll ID" aria-label="Search" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
                             <button className="btn fw-medium custom-hover w-auto text-nowrap" type="submit" style={{ backgroundColor: "#9e42f5", color: "white" }}>Search Poll</button>
                         </form>
                     </div>
