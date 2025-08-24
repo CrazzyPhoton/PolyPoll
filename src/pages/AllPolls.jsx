@@ -3,7 +3,7 @@ import { useAccount, useReadContract } from "wagmi";
 import { config } from "../utils/config";
 import { sepolia } from "viem/chains";
 import { PollDetailsByIdOnLoad } from "../utils/PollDetailsByIdOnLoad";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 export const AllPolls = () => {
     const [page, setPage] = useState(1);
@@ -15,6 +15,7 @@ export const AllPolls = () => {
     const pollsPerPage = 10;
     const maxPageButtons = 4;
     const account = useAccount();
+    const navigate = useNavigate();
 
     const { data: _pollsCreated } = useReadContract({
         address: config.contractAddress,
@@ -23,7 +24,7 @@ export const AllPolls = () => {
         chainId: sepolia.id
     });
 
-    const { data: _votedPolls } = useReadContract({
+    const { data: _votedPolls, refetch: refetchVotedPolls } = useReadContract({
         address: config.contractAddress,
         abi: config.contractABI,
         functionName: "pollsVotedByAddress",
@@ -31,7 +32,7 @@ export const AllPolls = () => {
         chainId: sepolia.id
     })
 
-    const { data: _notVotedPolls } = useReadContract({
+    const { data: _notVotedPolls, refetch: refetchNotVotedPolls } = useReadContract({
         address: config.contractAddress,
         abi: config.contractABI,
         functionName: "pollsNotVotedByAddress",
@@ -50,6 +51,21 @@ export const AllPolls = () => {
 
     const [isVotedPollsActive, setIsVotedPollsActive] = useState(false);
     const [isNotVotedPollsActive, setIsNotVotedPollsActive] = useState(false);
+
+    // Handle successful vote - switch to Voted Polls if Not Voted Polls was active and navigate to voted poll
+    const handleVoteSuccess = (votedPollId) => {
+        // Only switch if Not Voted Polls was active
+        if (isNotVotedPollsActive) {
+            setIsVotedPollsActive(true);
+            setIsNotVotedPollsActive(false);
+            setPage(1); // Reset to first page to show the newly voted poll
+            // Clear search mode if active
+            setIsInSearchMode(false);
+            
+            // Navigate to the voted poll with pollId parameter
+            navigate(`/all-polls?pollId=${votedPollId}`);
+        }
+    };
 
     useEffect(() => {
         if (!_pollsCreated || !searchedPollId || isNaN(searchedPollId)) {
@@ -328,7 +344,13 @@ export const AllPolls = () => {
                         className="d-flex align-items-center justify-content-center list-group-item h-auto pb-5 pt-3 border border-2 border-black rounded-5"
                         style={pollId === highlightedPollId ? { boxShadow: "0 0 12px 3px #9e42f5" } : {}}
                     >
-                        <PollDetailsByIdOnLoad pollId={pollId} onLoaded={pollId === highlightedPollId ? (id) => setLoadedPollId(id) : undefined} />
+                        <PollDetailsByIdOnLoad 
+                            pollId={pollId} 
+                            onLoaded={pollId === highlightedPollId ? (id) => setLoadedPollId(id) : undefined}
+                            onVoteSuccess={handleVoteSuccess}
+                            refetchVotedPolls={refetchVotedPolls}
+                            refetchNotVotedPolls={refetchNotVotedPolls}
+                        />
                     </div>
                 ))}
             </div>

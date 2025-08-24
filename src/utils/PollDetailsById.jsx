@@ -123,7 +123,7 @@ export const PollDetailsById = ({ pollId }) => {
                 {Array.from({ length: pollIdDetails[5].length }).map((_, index) => (
                     <button key={index}
                         className="btn w-100 fw-bold p-2 my-2 rounded-5 custom-hover text-center text-wrap"
-                        style={{ backgroundColor: "#9e42f5", color: "white" }}
+                        style={{ backgroundColor: choiceVoted && (parseInt(choiceVoted.toString(), 10) - 1).toString() === index.toString() ? "#280053ff" : "#9e42f5", color: "white" }}
                         onClick={() => handleVote(pollId, index)}
                         disabled={connectedAccount.isDisconnected || !pollTimeLeft || castVote.isPending || waitForVoteTxn.isLoading || hasAddressVoted || pollIdDetails[3]}>
                         {(castVote.isPending && clickedChoice[index]) || (waitForVoteTxn.isLoading && clickedChoice[index]) ? (

@@ -5,7 +5,7 @@ import { sepolia } from "viem/chains";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { PollConfigModal } from "./PollConfigModal";
 
-export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
+export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetchVotedPolls, refetchNotVotedPolls }) => {
     const { data: pollIdDetails, isLoading, error, refetch: refetchPollIdDetails } = useReadContract({
         address: config.contractAddress,
         abi: config.contractABI,
@@ -200,8 +200,21 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
             refetchHasAddressVoted();
             refetchChoiceVoted();
             refetchPollIdDetails();
+            
+            // Refetch voted and not voted polls arrays
+            if (refetchVotedPolls) {
+                refetchVotedPolls();
+            }
+            if (refetchNotVotedPolls) {
+                refetchNotVotedPolls();
+            }
+            
+            // Notify parent component of successful vote with the pollId
+            if (onVoteSuccess) {
+                onVoteSuccess(pollId);
+            }
         }
-    }, [waitForVoteTxn.isSuccess, refetchHasAddressVoted, refetchChoiceVoted, refetchPollIdDetails])
+    }, [waitForVoteTxn.isSuccess, refetchHasAddressVoted, refetchChoiceVoted, refetchPollIdDetails, onVoteSuccess, pollId, refetchVotedPolls, refetchNotVotedPolls])
 
     useEffect(() => {
         // Notify parent that this pollId is fully loaded/rendered
@@ -396,7 +409,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                 {Array.from({ length: pollIdDetails[5].length }).map((_, index) => (
                     <button key={index}
                         className="btn w-100 fw-bold p-2 my-2 rounded-5 custom-hover"
-                        style={{ backgroundColor: "#9e42f5", color: "white" }}
+                        style={{ backgroundColor: choiceVoted && (parseInt(choiceVoted.toString(), 10) - 1).toString() === index.toString() ? "#280053ff" : "#9e42f5", color: "white" }}
                         onClick={() => handleVote(pollId, index)}
                         disabled={connectedAccount.isDisconnected || !pollTimeLeft || castVote.isPending || waitForVoteTxn.isLoading || hasAddressVoted || pollIdDetails[3]}>
                         {(castVote.isPending && clickedChoice[index]) || (waitForVoteTxn.isLoading && clickedChoice[index]) ? (
@@ -435,6 +448,5 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded }) => {
                 </div>
             ) : null}
         </div>
-
     );
 };
