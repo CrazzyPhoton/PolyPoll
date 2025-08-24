@@ -14,6 +14,7 @@ export const AllPolls = () => {
 
     const pollsPerPage = 10;
     const maxPageButtons = 4;
+    const account = useAccount();
 
     const { data: _pollsCreated } = useReadContract({
         address: config.contractAddress,
@@ -22,17 +23,50 @@ export const AllPolls = () => {
         chainId: sepolia.id
     });
 
+    const { data: _votedPolls } = useReadContract({
+        address: config.contractAddress,
+        abi: config.contractABI,
+        functionName: "pollsVotedByAddress",
+        args: [account.address? account.address : "0x0000000000000000000000000000000000000000"],
+        chainId: sepolia.id
+    })
+
+    const { data: _notVotedPolls } = useReadContract({
+        address: config.contractAddress,
+        abi: config.contractABI,
+        functionName: "pollsNotVotedByAddress",
+        args: [account.address? account.address : "0x0000000000000000000000000000000000000000"],
+        chainId: sepolia.id
+    })
+
     // Query param management
     const [searchParams, setSearchParams] = useSearchParams();
     const searchedPollId = parseInt(searchParams.get("pollId"), 10);
 
     // --- New Ref to track if we just searched
     const justSearchedRef = useRef(false);
+    // Track if we're in search mode (to override filters) vs normal mode
+    const [isInSearchMode, setIsInSearchMode] = useState(false);
+
+    const [isVotedPollsActive, setIsVotedPollsActive] = useState(false);
+    const [isNotVotedPollsActive, setIsNotVotedPollsActive] = useState(false);
 
     useEffect(() => {
-        if (!_pollsCreated || !searchedPollId || isNaN(searchedPollId)) return;
+        if (!_pollsCreated || !searchedPollId || isNaN(searchedPollId)) {
+            setIsInSearchMode(false);
+            return;
+        }
         const pollsCreated = parseInt(_pollsCreated.toString(), 10);
-        if (searchedPollId < 1 || searchedPollId > pollsCreated) return;
+        if (searchedPollId < 1 || searchedPollId > pollsCreated) {
+            setIsInSearchMode(false);
+            return;
+        }
+
+        // Enter search mode and clear filters when searching for a specific poll
+        setIsInSearchMode(true);
+        setIsVotedPollsActive(false);
+        setIsNotVotedPollsActive(false);
+
         const pollPos = pollsCreated - searchedPollId + 1;
         const pageForSearch = Math.ceil(pollPos / pollsPerPage);
 
@@ -48,6 +82,13 @@ export const AllPolls = () => {
         }
         // If pollId is not in URL, do nothing special!
     }, [_pollsCreated, searchedPollId, page]);
+
+    // Clear search mode when no searchedPollId
+    useEffect(() => {
+        if (!searchedPollId || isNaN(searchedPollId)) {
+            setIsInSearchMode(false);
+        }
+    }, [searchedPollId]);
 
     useEffect(() => {
         if (
@@ -74,20 +115,41 @@ export const AllPolls = () => {
         }
     }, [page]);
 
-    const [isVotedPollsActive, setIsVotedPollsActive] = useState(false);
-    const [isNotVotedPollsActive, setIsNotVotedPollsActive] = useState(false);
-    const account = useAccount();
+    // Reset filters when account is disconnected
+    useEffect(() => {
+        if (!account.isConnected) {
+            setIsVotedPollsActive(false);
+            setIsNotVotedPollsActive(false);
+            setPage(1); // Reset to first page
+        }
+    }, [account.isConnected]);
 
     const handleVotedPollsClick = () => {
+        // Exit search mode and clear search params when filter is clicked
+        setIsInSearchMode(false);
+        if (searchedPollId) {
+            searchParams.delete("pollId");
+            setSearchParams(searchParams);
+        }
+        
         if (!isVotedPollsActive) {
-            setIsNotVotedPollsActive(false)
+            setIsNotVotedPollsActive(false);
+            setPage(1); // Reset to first page when switching filters
         }
         setIsVotedPollsActive(!isVotedPollsActive);
     };
 
     const handleNotVotedPollsClick = () => {
+        // Exit search mode and clear search params when filter is clicked
+        setIsInSearchMode(false);
+        if (searchedPollId) {
+            searchParams.delete("pollId");
+            setSearchParams(searchParams);
+        }
+        
         if (!isNotVotedPollsActive) {
-            setIsVotedPollsActive(false)
+            setIsVotedPollsActive(false);
+            setPage(1); // Reset to first page when switching filters
         }
         setIsNotVotedPollsActive(!isNotVotedPollsActive);
     };
@@ -104,14 +166,52 @@ export const AllPolls = () => {
         );
     }
 
-    const pollsCreated = parseInt(_pollsCreated.toString(), 10);
-    const totalPages = Math.ceil(pollsCreated / pollsPerPage);
+    // Determine which polls to show based on active filters
+    let currentPolls = [];
+    let totalPolls = 0;
 
-    const startIndex = pollsCreated - (page - 1) * pollsPerPage;
-    const endIndex = Math.max(startIndex - pollsPerPage + 1, 1);
-    const pollIds = [];
-    for (let pollId = startIndex; pollId >= endIndex; pollId--) {
-        pollIds.push(pollId);
+    // Only override filters if we're in search mode AND actively searching
+    const shouldShowAllPollsForSearch = isInSearchMode && searchedPollId && !isNaN(searchedPollId);
+
+    if (!shouldShowAllPollsForSearch && isVotedPollsActive && _votedPolls) {
+        // Convert to array and ensure they're numbers, then sort in descending order
+        const votedPollsArray = Array.isArray(_votedPolls) ? _votedPolls : [_votedPolls];
+        currentPolls = votedPollsArray
+            .map(id => typeof id === 'string' ? parseInt(id, 10) : Number(id))
+            .filter(id => !isNaN(id))
+            .sort((a, b) => b - a); // Descending order
+        totalPolls = currentPolls.length;
+    } else if (!shouldShowAllPollsForSearch && isNotVotedPollsActive && _notVotedPolls) {
+        // Convert to array and ensure they're numbers, then sort in descending order
+        const notVotedPollsArray = Array.isArray(_notVotedPolls) ? _notVotedPolls : [_notVotedPolls];
+        currentPolls = notVotedPollsArray
+            .map(id => typeof id === 'string' ? parseInt(id, 10) : Number(id))
+            .filter(id => !isNaN(id))
+            .sort((a, b) => b - a); // Descending order
+        totalPolls = currentPolls.length;
+    } else {
+        // Show all polls (default behavior or when searching) - already in descending order
+        const pollsCreated = parseInt(_pollsCreated.toString(), 10);
+        totalPolls = pollsCreated;
+        
+        const startIndex = pollsCreated - (page - 1) * pollsPerPage;
+        const endIndex = Math.max(startIndex - pollsPerPage + 1, 1);
+        
+        for (let pollId = startIndex; pollId >= endIndex; pollId--) {
+            currentPolls.push(pollId);
+        }
+    }
+
+    const totalPages = Math.ceil(totalPolls / pollsPerPage);
+
+    // Calculate poll IDs for current page when using filtered data
+    let pollIds = [];
+    if (!shouldShowAllPollsForSearch && (isVotedPollsActive || isNotVotedPollsActive)) {
+        const startIdx = (page - 1) * pollsPerPage;
+        const endIdx = Math.min(startIdx + pollsPerPage, totalPolls);
+        pollIds = currentPolls.slice(startIdx, endIdx);
+    } else {
+        pollIds = currentPolls;
     }
 
     let startPage = Math.max(1, Math.min(page - Math.floor(maxPageButtons / 2), totalPages - maxPageButtons + 1));
@@ -130,8 +230,12 @@ export const AllPolls = () => {
         // Remove pollId from the search params in the URL
         searchParams.delete("pollId");
         setSearchParams(searchParams);
+        setIsInSearchMode(false); // Exit search mode
         justSearchedRef.current = false;  // <<< don't scroll to searchedPollId anymore
     };
+
+    // Determine which poll should be highlighted (only when we have a valid searchedPollId in URL)
+    const highlightedPollId = (searchedPollId && !isNaN(searchedPollId)) ? searchedPollId : null;
 
     return (
         <div id="all-polls" className="container-fluid d-flex flex-column align-items-center justify-content-start bg-info-subtle py-5 px-0 h-auto">
@@ -148,11 +252,10 @@ export const AllPolls = () => {
                                 backgroundColor: isVotedPollsActive ? "#9e42f5" : "transparent",
                                 color: isVotedPollsActive ? "white" : "black",
                                 border: isVotedPollsActive ? "2px solid #9e42f5" : "2px solid black",
-                                // boxShadow: isVotedPollsActive ? "" : "0px 3px 3px 0px grey"
                             }}
                             onClick={handleVotedPollsClick}
                         >
-                            Voted Polls
+                            Voted Polls {_votedPolls && `(${Array.isArray(_votedPolls) ? _votedPolls.length : 1})`}
                         </button>
                         <button
                             id="notVotedPolls"
@@ -163,92 +266,109 @@ export const AllPolls = () => {
                                 backgroundColor: isNotVotedPollsActive ? "#9e42f5" : "transparent",
                                 color: isNotVotedPollsActive ? "white" : "black",
                                 border: isNotVotedPollsActive ? "2px solid #9e42f5" : "2px solid black",
-                                // boxShadow: isNotVotedPollsActive ? "" : "0px 3px 3px 0px grey"
                             }}
                             onClick={handleNotVotedPollsClick}
                         >
-                            Not Voted Polls
+                            Not Voted Polls {_notVotedPolls && `(${Array.isArray(_notVotedPolls) ? _notVotedPolls.length : 1})`}
                         </button>
                     </div>
                 }
             </div>
-            <div className="d-flex rounded-5 border border-2 border-black bg-light p-3 mb-5">
-                <div className="btn-group">
-                    <button
-                        className="btn fw-bold rounded-5 custom-hover d-flex align-items-center mx-1 p-sm-3 p-2"
-                        type="button"
-                        style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
-                        onClick={() => handleSetPage(1)}
-                        disabled={page === 1}
-                    >
-                        {"First"}
-                    </button>
-                    <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page - 1)} disabled={page === 1}>
-                        {"<<"}
-                    </button>
-                    {visiblePages.map((p) => (
-                        <button key={p} type="button" className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white", border: "0", outline: page == p ? "4px solid black" : "none" }} onClick={() => handleSetPage(p)}>
-                            {p}
-                        </button>
-                    ))}
-                    <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page + 1)} disabled={page === totalPages}>
-                        {">>"}
-                    </button>
-                    <button
-                        className="btn fw-bold rounded-end-5 custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2"
-                        type="button"
-                        style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
-                        onClick={() => handleSetPage(totalPages)}
-                        disabled={page === totalPages}
-                    >
-                        {"Last"}
-                    </button>
+
+            {/* Show message when no polls match the filter - but not when searching */}
+            {!shouldShowAllPollsForSearch && (isVotedPollsActive || isNotVotedPollsActive) && pollIds.length === 0 && (
+                <div className="w-75 bg-light h-auto rounded-5 border border-2 border-black d-flex align-items-center justify-content-center py-5 mb-5">
+                    <span className="fs-4 fw-bold text-muted">
+                        No {isVotedPollsActive ? 'voted' : 'not voted'} polls found
+                    </span>
                 </div>
-            </div>
+            )}
+
+            {/* Pagination controls - shown when totalPages > 1 (i.e., more than 10 polls) */}
+            {totalPages > 1 && (
+                <div className="d-flex rounded-5 border border-2 border-black bg-light p-3 mb-5">
+                    <div className="btn-group">
+                        <button
+                            className="btn fw-bold rounded-5 custom-hover d-flex align-items-center mx-1 p-sm-3 p-2"
+                            type="button"
+                            style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                            onClick={() => handleSetPage(1)}
+                            disabled={page === 1}
+                        >
+                            {"First"}
+                        </button>
+                        <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page - 1)} disabled={page === 1}>
+                            {"<<"}
+                        </button>
+                        {visiblePages.map((p) => (
+                            <button key={p} type="button" className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white", border: "0", outline: page == p ? "4px solid black" : "none" }} onClick={() => handleSetPage(p)}>
+                                {p}
+                            </button>
+                        ))}
+                        <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page + 1)} disabled={page === totalPages}>
+                            {">>"}
+                        </button>
+                        <button
+                            className="btn fw-bold rounded-end-5 custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2"
+                            type="button"
+                            style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                            onClick={() => handleSetPage(totalPages)}
+                            disabled={page === totalPages}
+                        >
+                            {"Last"}
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <div className="list-group h-auto w-75 gap-5 mb-4">
                 {pollIds.map((pollId) => (
                     <div
                         key={pollId}
                         className="d-flex align-items-center justify-content-center list-group-item h-auto pb-5 pt-3 border border-2 border-black rounded-5"
-                        style={pollId === searchedPollId ? { boxShadow: "0 0 12px 3px #9e42f5" } : {}}
+                        style={pollId === highlightedPollId ? { boxShadow: "0 0 12px 3px #9e42f5" } : {}}
                     >
-                        <PollDetailsByIdOnLoad pollId={pollId} onLoaded={pollId === searchedPollId ? (id) => setLoadedPollId(id) : undefined} />
+                        <PollDetailsByIdOnLoad pollId={pollId} onLoaded={pollId === highlightedPollId ? (id) => setLoadedPollId(id) : undefined} />
                     </div>
                 ))}
             </div>
-            <div className="d-flex rounded-5 border border-2 border-black bg-light p-3 mt-4">
-                <div className="btn-group">
-                    <button
-                        className="btn fw-bold rounded-5 custom-hover d-flex align-items-center mx-1 p-sm-3 p-2"
-                        type="button"
-                        style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
-                        onClick={() => handleSetPage(1)}
-                        disabled={page === 1}
-                    >
-                        {"First"}
-                    </button>
-                    <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page - 1)} disabled={page === 1}>
-                        {"<<"}
-                    </button>
-                    {visiblePages.map((p) => (
-                        <button key={p} type="button" className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white", border: "0", outline: page == p ? "4px solid black" : "none" }} onClick={() => handleSetPage(p)}>
-                            {p}
+
+            {/* Bottom pagination controls - shown when totalPages > 1 */}
+            {totalPages > 1 && (
+                <div className="d-flex rounded-5 border border-2 border-black bg-light p-3 mt-4">
+                    <div className="btn-group">
+                        <button
+                            className="btn fw-bold rounded-5 custom-hover d-flex align-items-center mx-1 p-sm-3 p-2"
+                            type="button"
+                            style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                            onClick={() => handleSetPage(1)}
+                            disabled={page === 1}
+                        >
+                            {"First"}
                         </button>
-                    ))}
-                    <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page + 1)} disabled={page === totalPages}>
-                        {">>"}
-                    </button>
-                    <button
-                        className="btn fw-bold rounded-end-5 custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2"
-                        type="button"
-                        style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
-                        onClick={() => handleSetPage(totalPages)}
-                        disabled={page === totalPages}
-                    >
-                        {"Last"}
-                    </button>
+                        <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page - 1)} disabled={page === 1}>
+                            {"<<"}
+                        </button>
+                        {visiblePages.map((p) => (
+                            <button key={p} type="button" className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2 custom-hover" style={{ backgroundColor: "#9e42f5", color: "white", border: "0", outline: page == p ? "4px solid black" : "none" }} onClick={() => handleSetPage(p)}>
+                                {p}
+                            </button>
+                        ))}
+                        <button type="button" className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} onClick={() => handleSetPage(page + 1)} disabled={page === totalPages}>
+                            {">>"}
+                        </button>
+                        <button
+                            className="btn fw-bold rounded-end-5 custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2"
+                            type="button"
+                            style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                            onClick={() => handleSetPage(totalPages)}
+                            disabled={page === totalPages}
+                        >
+                            {"Last"}
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };
