@@ -238,7 +238,7 @@ export const AllPolls = () => {
     const highlightedPollId = (searchedPollId && !isNaN(searchedPollId)) ? searchedPollId : null;
 
     return (
-        <div id="all-polls" className="container-fluid d-flex flex-column align-items-center justify-content-start bg-info-subtle py-5 px-0 h-auto">
+        <div id="all-polls" className="container-fluid d-flex flex-column align-items-center justify-content-start bg-info-subtle py-5 px-0 min-vh-100">
             <div ref={paginationRef} className="d-flex flex-column gap-4 align-items-center justify-content-center w-75 bg-light text-center display-4 fw-bold mb-5 py-3 rounded-5 border border-2 border-black">
                 All Polls
                 {account.isConnected &&
