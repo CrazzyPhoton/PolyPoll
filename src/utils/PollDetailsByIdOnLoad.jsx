@@ -282,7 +282,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetch
             <div className="d-flex align-items-center justify-content-end w-100">
                 <button className="btn rounded-5 share-button d-flex align-items-center justify-content-center mb-md-0 mb-3 p-2" onClick={() => setShowModal(true)}> <BsThreeDotsVertical /></button>
                 <PollConfigModal show={showModal} onClose={() => setShowModal(false)}>
-                    <h4 className="px-4 fw-bold">{pollId}. {pollIdDetails[4]}</h4>
+                    <h4 className="px-4 text-center fw-bold">{pollId}. {pollIdDetails[4]}</h4>
                     <button className="btn mt-3 mb-1 px-3 rounded-5 custom-hover fw-bold" style={{ backgroundColor: "#9e42f5", color: "white" }} onClick={handleCopy} disabled={buttonText === "Link Copied"}>{buttonText}</button>
                     {(connectedAccount.address === pollIdDetails[0] || ownerAddress === connectedAccount.address) && (
                         <>
@@ -408,7 +408,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetch
             <div className="btn-group-vertical gap-2" style={{ width: "75%" }} role="group" aria-label="Vertical button group">
                 {Array.from({ length: pollIdDetails[5].length }).map((_, index) => (
                     <button key={index}
-                        className="btn w-100 fw-bold p-2 my-2 rounded-5 custom-hover"
+                        className="btn w-100 fw-bold p-2 my-2 rounded-5 text-break custom-hover"
                         style={{ backgroundColor: choiceVoted && (parseInt(choiceVoted.toString(), 10) - 1).toString() === index.toString() ? "#280053ff" : "#9e42f5", color: "white" }}
                         onClick={() => handleVote(pollId, index)}
                         disabled={connectedAccount.isDisconnected || !pollTimeLeft || castVote.isPending || waitForVoteTxn.isLoading || hasAddressVoted || pollIdDetails[3]}>
@@ -429,7 +429,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetch
                     </button>
                 ))}
             </div>
-            <h6 className="fw-bold mt-4"> Time left: {!pollTimeLeft || pollIdDetails[3] ? "0:00:00:00" : pollTimeLeft.join(":")} </h6>
+            <h6 className="fw-bold mt-4 text-center"> Time left: {!pollTimeLeft || pollIdDetails[3] ? "0:00:00:00" : pollTimeLeft.join(":")} </h6>
             {connectedAccount.address && !pollTimeLeft && !pollIdDetails[3] ? (
                 <div className="mt-3 fw-semibold">
                     Poll ended

@@ -299,7 +299,7 @@ export const Content = () => {
                     </a>
                 </div>
                 <div className="container-fluid d-flex flex-column align-items-center justify-content-center pt-4 pb-4 bg-light rounded-5 border border-2 border-black shadow-lg mt-lg-0 mt-5 mx-5">
-                    <h4 className="fw-semibold display-6 p-0 mb-3">Vote for a poll</h4>
+                    <h4 className="fw-semibold text-center display-6 p-0 mb-3">Vote for a poll</h4>
                     <p className="text-center text-wrap text-body-secondary m-0 py-0 px-5 fs-5">
                         Cast your vote for polls created by users.
                         Browse active polls, review choices,
@@ -521,7 +521,7 @@ export const Content = () => {
                     data-bs-ride="carousel"
                     style={{ height: "100%", width: "89vw", scrollMarginTop: "115px" }}>
                     <h1 className="fw-semibold text-center mt-1 mb-5">Cast Vote</h1>
-                    <div className="carousel-inner" style={{ height: "100%", width: "100%" }}>
+                    <div className="carousel-inner overflow-y-auto" style={{ height: "100%", width: "100%" }}>
                         {uniqueRandomIntegers.length === 0 ? (
                             <div className="carousel-item active">
                                 <div className="d-flex align-items-center justify-content-center gap-2">

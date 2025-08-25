@@ -122,7 +122,7 @@ export const PollDetailsById = ({ pollId }) => {
             <div className="btn-group-vertical gap-2" style={{ width: "65%" }} role="group" aria-label="Vertical button group">
                 {Array.from({ length: pollIdDetails[5].length }).map((_, index) => (
                     <button key={index}
-                        className="btn w-100 fw-bold p-2 my-2 rounded-5 custom-hover text-center text-wrap"
+                        className="btn w-100 fw-bold p-2 my-2 rounded-5 custom-hover text-center text-break"
                         style={{ backgroundColor: choiceVoted && (parseInt(choiceVoted.toString(), 10) - 1).toString() === index.toString() ? "#280053ff" : "#9e42f5", color: "white" }}
                         onClick={() => handleVote(pollId, index)}
                         disabled={connectedAccount.isDisconnected || !pollTimeLeft || castVote.isPending || waitForVoteTxn.isLoading || hasAddressVoted || pollIdDetails[3]}>
@@ -143,21 +143,21 @@ export const PollDetailsById = ({ pollId }) => {
                     </button>
                 ))}
             </div>
-            <h6 className="fw-bold mt-4"> Time left: {!pollTimeLeft || pollIdDetails[3] ? "0:00:00:00" : pollTimeLeft.join(":")} </h6>
+            <h6 className="fw-bold text-center mt-4"> Time left: {!pollTimeLeft || pollIdDetails[3] ? "0:00:00:00" : pollTimeLeft.join(":")} </h6>
             {connectedAccount.address && !pollTimeLeft && !pollIdDetails[3] ? (
-                <div className="mt-3 fw-semibold">
+                <div className="mt-3 mb-3 fw-semibold">
                     Poll ended
                 </div>
             ) : connectedAccount.isDisconnected && !pollTimeLeft && !pollIdDetails[3] ? (
-                <div className="mt-3 fw-semibold">
+                <div className="mt-3 mb-3 fw-semibold">
                     Poll ended
                 </div>
             ) : connectedAccount.isDisconnected && !pollIdDetails[3] ? (
-                <div className="mt-3 fw-semibold text-center text-wrap w-75">
+                <div className="mt-3 mb-3 fw-semibold text-center text-wrap w-75">
                     Please connect your wallet to participate in the poll
                 </div>
             ) : pollIdDetails[3] ? (
-                <div className="mt-3 fw-semibold">
+                <div className="mt-3 mb-3 fw-semibold">
                     Poll is deemed void
                 </div>
             ) : null}
