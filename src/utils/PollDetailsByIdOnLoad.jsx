@@ -418,11 +418,11 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetch
                                 <div className="spinner-border spinner-border-sm text-light" role="status" />
                             </div>
                         ) : connectedAccount.address && hasAddressVoted && !pollIdDetails[3] ? (
-                            `${pollIdDetails[5][index]} : ${parseInt((pollIdDetails[6][index]).toString(), 10) && parseInt((pollIdDetails[7]).toString(), 10) ? ((parseInt((pollIdDetails[6][index]).toString(), 10) * 100) / parseInt((pollIdDetails[7]).toString(), 10)) : 0}% votes ${choiceVoted && (parseInt(choiceVoted.toString(), 10) - 1).toString() === index.toString() ? "(Your vote)" : ""}`
+                            `${pollIdDetails[5][index]} : ${parseInt((pollIdDetails[6][index]).toString(), 10) && parseInt((pollIdDetails[7]).toString(), 10) ? ((parseInt((pollIdDetails[6][index]).toString(), 10) * 100) / parseInt((pollIdDetails[7]).toString(), 10)).toFixed(2) : 0}% votes ${choiceVoted && (parseInt(choiceVoted.toString(), 10) - 1).toString() === index.toString() ? "(Your vote)" : ""}`
                         ) : connectedAccount.address && !hasAddressVoted && !pollTimeLeft && !pollIdDetails[3] ? (
-                            `${pollIdDetails[5][index]} : ${parseInt((pollIdDetails[6][index]).toString(), 10) && parseInt((pollIdDetails[7]).toString(), 10) ? ((parseInt((pollIdDetails[6][index]).toString(), 10) * 100) / parseInt((pollIdDetails[7]).toString(), 10)) : 0}% votes`
+                            `${pollIdDetails[5][index]} : ${parseInt((pollIdDetails[6][index]).toString(), 10) && parseInt((pollIdDetails[7]).toString(), 10) ? ((parseInt((pollIdDetails[6][index]).toString(), 10) * 100) / parseInt((pollIdDetails[7]).toString(), 10)).toFixed(2) : 0}% votes`
                         ) : connectedAccount.isDisconnected && !pollTimeLeft && !pollIdDetails[3] ? (
-                            `${pollIdDetails[5][index]} : ${parseInt((pollIdDetails[6][index]).toString(), 10) && parseInt((pollIdDetails[7]).toString(), 10) ? ((parseInt((pollIdDetails[6][index]).toString(), 10) * 100) / parseInt((pollIdDetails[7]).toString(), 10)) : 0}% votes`
+                            `${pollIdDetails[5][index]} : ${parseInt((pollIdDetails[6][index]).toString(), 10) && parseInt((pollIdDetails[7]).toString(), 10) ? ((parseInt((pollIdDetails[6][index]).toString(), 10) * 100) / parseInt((pollIdDetails[7]).toString(), 10)).toFixed(2) : 0}% votes`
                         ) : pollIdDetails[3] ? (
                             pollIdDetails[5][index]
                         ) : pollIdDetails[5][index]}

@@ -132,7 +132,7 @@ export function Navbar() {
                                         }}
                                     />
                                     <button
-                                        className="btn fw-medium text-nowrap shadow-sm py-2 py-xl-2 px-3 px-xl-3"
+                                        className="btn fw-medium text-nowrap shadow-sm py-2 py-xl-2 px-3 px-xl-3 custom-hover"
                                         type="submit"
                                         style={{
                                             backgroundColor: "#9e42f5",
