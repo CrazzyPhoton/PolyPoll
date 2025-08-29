@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useReadContract, useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { config } from "./config";
-import { sepolia } from "viem/chains";
+import { polygon } from "viem/chains";
 
 export const PollDetailsById = ({ pollId }) => {
     const { data: pollIdDetails, isLoading, error, refetch: refetchPollIdDetails } = useReadContract({
@@ -9,7 +9,7 @@ export const PollDetailsById = ({ pollId }) => {
         abi: config.contractABI,
         functionName: "getPollDetails",
         args: [pollId ? pollId : 0],
-        chainId: sepolia.id
+        chainId: polygon.id
     });
 
     // console.log(typeof pollIdDetails[3])
@@ -20,7 +20,7 @@ export const PollDetailsById = ({ pollId }) => {
         abi: config.contractABI,
         functionName: "hasVotedForPollId",
         args: [(pollId ? pollId : 0), (connectedAccount.address ? connectedAccount.address : "0x0000000000000000000000000000000000000000")],
-        chainId: sepolia.id
+        chainId: polygon.id
     });
 
     const { data: choiceVoted, refetch: refetchChoiceVoted } = useReadContract({
@@ -28,7 +28,7 @@ export const PollDetailsById = ({ pollId }) => {
         abi: config.contractABI,
         functionName: "choiceVotedForPollId",
         args: [(pollId ? pollId : 0), (connectedAccount.address ? connectedAccount.address : "0x0000000000000000000000000000000000000000")],
-        chainId: sepolia.id
+        chainId: polygon.id
     });
 
     const [clickedChoice, setClickedChoice] = useState(null);

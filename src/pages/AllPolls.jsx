@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useAccount, useReadContract } from "wagmi";
 import { config } from "../utils/config";
-import { sepolia } from "viem/chains";
+import { polygon } from "viem/chains";
 import { PollDetailsByIdOnLoad } from "../utils/PollDetailsByIdOnLoad";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
@@ -21,7 +21,7 @@ export const AllPolls = () => {
         address: config.contractAddress,
         abi: config.contractABI,
         functionName: "pollsCreated",
-        chainId: sepolia.id
+        chainId: polygon.id
     });
 
     const { data: _votedPolls, refetch: refetchVotedPolls } = useReadContract({
@@ -29,7 +29,7 @@ export const AllPolls = () => {
         abi: config.contractABI,
         functionName: "pollsVotedByAddress",
         args: [account.address? account.address : "0x0000000000000000000000000000000000000000"],
-        chainId: sepolia.id
+        chainId: polygon.id
     })
 
     const { data: _notVotedPolls, refetch: refetchNotVotedPolls } = useReadContract({
@@ -37,7 +37,7 @@ export const AllPolls = () => {
         abi: config.contractABI,
         functionName: "pollsNotVotedByAddress",
         args: [account.address? account.address : "0x0000000000000000000000000000000000000000"],
-        chainId: sepolia.id
+        chainId: polygon.id
     })
 
     // Query param management

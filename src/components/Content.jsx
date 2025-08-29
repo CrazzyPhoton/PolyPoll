@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { config } from "../utils/config";
-import { sepolia } from "viem/chains";
+import { polygon } from "viem/chains";
 import { PollDetailsById } from "../utils/PollDetailsById";
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ export const Content = () => {
         address: config.contractAddress,
         abi: config.contractABI,
         functionName: "maximumDuration",
-        chainId: sepolia.id
+        chainId: polygon.id
     });
     const [question, setQuestion] = useState("");
     const [numChoices, setNumChoices] = useState(2);
@@ -30,7 +30,7 @@ export const Content = () => {
         address: config.contractAddress,
         abi: config.contractABI,
         functionName: "pollsCreated",
-        chainId: sepolia.id
+        chainId: polygon.id
     })
 
     // Duration config //
@@ -64,7 +64,7 @@ export const Content = () => {
         address: config.contractAddress,
         abi: config.contractABI,
         functionName: "maximumChoices",
-        chainId: sepolia.id
+        chainId: polygon.id
     });
 
     const maxChoices = currentMaxChoices.data ? parseInt(currentMaxChoices.data.toString(), 10) : 10;

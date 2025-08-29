@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useReadContract, useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { config } from "./config";
-import { sepolia } from "viem/chains";
+import { polygon } from "viem/chains";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { PollConfigModal } from "./PollConfigModal";
 
@@ -11,14 +11,14 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetch
         abi: config.contractABI,
         functionName: "getPollDetails",
         args: [pollId ? pollId : 0],
-        chainId: sepolia.id
+        chainId: polygon.id
     });
 
     const { data: ownerAddress } = useReadContract({
         address: config.contractAddress,
         abi: config.contractABI,
         functionName: "owner",
-        chainId: sepolia.id
+        chainId: polygon.id
     });
 
     const connectedAccount = useAccount();
@@ -28,7 +28,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetch
         abi: config.contractABI,
         functionName: "hasVotedForPollId",
         args: [(pollId ? pollId : 0), (connectedAccount.address ? connectedAccount.address : "0x0000000000000000000000000000000000000000")],
-        chainId: sepolia.id
+        chainId: polygon.id
     });
 
     const { data: choiceVoted, refetch: refetchChoiceVoted } = useReadContract({
@@ -36,7 +36,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetch
         abi: config.contractABI,
         functionName: "choiceVotedForPollId",
         args: [(pollId ? pollId : 0), (connectedAccount.address ? connectedAccount.address : "0x0000000000000000000000000000000000000000")],
-        chainId: sepolia.id
+        chainId: polygon.id
     });
 
     const [clickedChoice, setClickedChoice] = useState(null);
@@ -55,7 +55,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetch
         address: config.contractAddress,
         abi: config.contractABI,
         functionName: "maximumDuration",
-        chainId: sepolia.id
+        chainId: polygon.id
     });
     const [extendDurationTxnHash, setExtendDurationTxnHash] = useState(null);
     const [buttonText, setButtonText] = useState("Share");

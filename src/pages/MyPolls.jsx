@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAccount, useReadContract } from "wagmi";
 import { config } from "../utils/config";
-import { sepolia } from "viem/chains";
+import { polygon } from "viem/chains";
 import { PollDetailsByIdOnLoad } from "../utils/PollDetailsByIdOnLoad";
 
 export function MyPolls() {
@@ -13,7 +13,7 @@ export function MyPolls() {
         abi: config.contractABI,
         functionName: "pollsCreatedByAddress",
         args: [account.isConnected ? account.address : "0x0000000000000000000000000000000000000000"],
-        chainId: sepolia.id
+        chainId: polygon.id
     })
 
     // Scroll to top when page changes
