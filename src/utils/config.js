@@ -1,5 +1,5 @@
 export const config = {
-	contractAddress: "0xb14E990BF2D40bDfeA9d4819E76392dC7b404a80",
+	contractAddress: "0xCb9C24aDAB28C8a070741fEaEad6ab4f0ec5D83a",
 	contractABI: [
 	{
 		"inputs": [],
@@ -41,6 +41,42 @@ export const config = {
 		],
 		"name": "ChoicesOutOfBounds",
 		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_statement",
+				"type": "string"
+			},
+			{
+				"internalType": "string[]",
+				"name": "_choices",
+				"type": "string[]"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_duration",
+				"type": "uint32"
+			}
+		],
+		"name": "createPoll",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_pollId",
+				"type": "uint256"
+			}
+		],
+		"name": "deemPollVoid",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -101,6 +137,13 @@ export const config = {
 	},
 	{
 		"inputs": [],
+		"name": "pauseUserPollCreation",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "PollCreationPaused",
 		"type": "error"
 	},
@@ -118,6 +161,251 @@ export const config = {
 		"inputs": [],
 		"name": "PollVoidedForPollId",
 		"type": "error"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint16",
+				"name": "_newMaximumChoices",
+				"type": "uint16"
+			}
+		],
+		"name": "MaximumChoicesUpdated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint32",
+				"name": "_newMaximumDuration",
+				"type": "uint32"
+			}
+		],
+		"name": "MaximumDurationUpdated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_pollId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_creator",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint64",
+				"name": "_startTime",
+				"type": "uint64"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint64",
+				"name": "_endTime",
+				"type": "uint64"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "_statement",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string[]",
+				"name": "_choices",
+				"type": "string[]"
+			}
+		],
+		"name": "PollCreated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_pollId",
+				"type": "uint256"
+			}
+		],
+		"name": "PollDeemedVoid",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_pollId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint64",
+				"name": "_previousEndTime",
+				"type": "uint64"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint64",
+				"name": "_newEndTime",
+				"type": "uint64"
+			}
+		],
+		"name": "PollEndTimeUpdated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_pollId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_voter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint16",
+				"name": "_choiceVoted",
+				"type": "uint16"
+			}
+		],
+		"name": "PollVoted",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "unpauseUserPollCreation",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint16",
+				"name": "_newMaximumChoices",
+				"type": "uint16"
+			}
+		],
+		"name": "updateMaximumChoices",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint32",
+				"name": "_newMaximumDuration",
+				"type": "uint32"
+			}
+		],
+		"name": "updateMaximumDuration",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_pollId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint32",
+				"name": "_newDuration",
+				"type": "uint32"
+			}
+		],
+		"name": "updatePollEndTime",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [],
+		"name": "UserPollCreationPaused",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [],
+		"name": "UserPollCreationUnpaused",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_pollId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint16",
+				"name": "choiceIndex",
+				"type": "uint16"
+			}
+		],
+		"name": "vote",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [],
@@ -154,42 +442,6 @@ export const config = {
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_statement",
-				"type": "string"
-			},
-			{
-				"internalType": "string[]",
-				"name": "_choices",
-				"type": "string[]"
-			},
-			{
-				"internalType": "uint32",
-				"name": "_duration",
-				"type": "uint32"
-			}
-		],
-		"name": "createPoll",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_pollId",
-				"type": "uint256"
-			}
-		],
-		"name": "deemPollVoid",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -311,13 +563,6 @@ export const config = {
 	},
 	{
 		"inputs": [],
-		"name": "pauseUserPollCreation",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"name": "pollsCreated",
 		"outputs": [
 			{
@@ -384,88 +629,6 @@ export const config = {
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "unpauseUserPollCreation",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint16",
-				"name": "_newMaximumChoices",
-				"type": "uint16"
-			}
-		],
-		"name": "updateMaximumChoices",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint32",
-				"name": "_newMaximumDuration",
-				"type": "uint32"
-			}
-		],
-		"name": "updateMaximumDuration",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_pollId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint32",
-				"name": "_newDuration",
-				"type": "uint32"
-			}
-		],
-		"name": "updatePollEndTime",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_pollId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint16",
-				"name": "choiceIndex",
-				"type": "uint16"
-			}
-		],
-		"name": "vote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
