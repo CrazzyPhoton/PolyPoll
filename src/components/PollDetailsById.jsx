@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useReadContract, useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { config } from "./config";
+import { config } from "../utils/config";
 import { polygon } from "viem/chains";
 
-export const PollDetailsById = ({ pollId }) => {
+export function PollDetailsById({ pollId }) {
     const { data: pollIdDetails, isLoading, error, refetch: refetchPollIdDetails } = useReadContract({
         address: config.contractAddress,
         abi: config.contractABI,

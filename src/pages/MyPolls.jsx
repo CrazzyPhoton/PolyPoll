@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAccount, useReadContract } from "wagmi";
 import { config } from "../utils/config";
 import { polygon } from "viem/chains";
-import { PollDetailsByIdOnLoad } from "../utils/PollDetailsByIdOnLoad";
+import { PollDetailsByIdOnLoad } from "../components/PollDetailsByIdOnLoad";
 
 export function MyPolls() {
     const [page, setPage] = useState(1);
@@ -23,7 +23,7 @@ export function MyPolls() {
 
     const pollsPerPage = 10;
     const maxPageButtons = 4;
-    
+
     // Ensure createdPolls is an array before proceeding
     const pollsArray = createdPolls && Array.isArray(createdPolls) ? createdPolls : [];
     const numPollsCreated = pollsArray.length;
@@ -31,11 +31,11 @@ export function MyPolls() {
 
     // Create a reversed array to show newest polls first, then paginate
     const reversedPolls = [...pollsArray].reverse();
-    
+
     // Calculate the slice indices for current page
     const startIndex = (page - 1) * pollsPerPage;
     const endIndex = startIndex + pollsPerPage;
-    
+
     // Get the polls for current page
     const pollIds = reversedPolls.slice(startIndex, endIndex);
 
@@ -46,7 +46,7 @@ export function MyPolls() {
     if (endPage - startPage + 1 < maxPageButtons) {
         startPage = Math.max(1, endPage - maxPageButtons + 1);
     }
-    
+
     const visiblePages = [];
     for (let i = startPage; i <= endPage; i++) visiblePages.push(i);
 
@@ -86,36 +86,36 @@ export function MyPolls() {
                                 >
                                     First
                                 </button>
-                                <button 
-                                    type="button" 
-                                    className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" 
-                                    style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} 
-                                    onClick={() => handleSetPage(page - 1)} 
+                                <button
+                                    type="button"
+                                    className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2"
+                                    style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                                    onClick={() => handleSetPage(page - 1)}
                                     disabled={page === 1}
                                 >
                                     &lt;&lt;
                                 </button>
                                 {visiblePages.map((p) => (
-                                    <button 
-                                        key={p} 
-                                        type="button" 
-                                        className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2 custom-hover" 
-                                        style={{ 
-                                            backgroundColor: "#9e42f5", 
-                                            color: "white", 
-                                            border: "0", 
-                                            outline: page === p ? "4px solid black" : "none" 
-                                        }} 
+                                    <button
+                                        key={p}
+                                        type="button"
+                                        className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2 custom-hover"
+                                        style={{
+                                            backgroundColor: "#9e42f5",
+                                            color: "white",
+                                            border: "0",
+                                            outline: page === p ? "4px solid black" : "none"
+                                        }}
                                         onClick={() => handleSetPage(p)}
                                     >
                                         {p}
                                     </button>
                                 ))}
-                                <button 
-                                    type="button" 
-                                    className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" 
-                                    style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} 
-                                    onClick={() => handleSetPage(page + 1)} 
+                                <button
+                                    type="button"
+                                    className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2"
+                                    style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                                    onClick={() => handleSetPage(page + 1)}
                                     disabled={page === totalPages}
                                 >
                                     &gt;&gt;
@@ -157,36 +157,36 @@ export function MyPolls() {
                                 >
                                     First
                                 </button>
-                                <button 
-                                    type="button" 
-                                    className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" 
-                                    style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} 
-                                    onClick={() => handleSetPage(page - 1)} 
+                                <button
+                                    type="button"
+                                    className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2"
+                                    style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                                    onClick={() => handleSetPage(page - 1)}
                                     disabled={page === 1}
                                 >
                                     &lt;&lt;
                                 </button>
                                 {visiblePages.map((p) => (
-                                    <button 
-                                        key={p} 
-                                        type="button" 
-                                        className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2 custom-hover" 
-                                        style={{ 
-                                            backgroundColor: "#9e42f5", 
-                                            color: "white", 
-                                            border: "0", 
-                                            outline: page === p ? "4px solid black" : "none" 
-                                        }} 
+                                    <button
+                                        key={p}
+                                        type="button"
+                                        className="btn fw-bold d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2 custom-hover"
+                                        style={{
+                                            backgroundColor: "#9e42f5",
+                                            color: "white",
+                                            border: "0",
+                                            outline: page === p ? "4px solid black" : "none"
+                                        }}
                                         onClick={() => handleSetPage(p)}
                                     >
                                         {p}
                                     </button>
                                 ))}
-                                <button 
-                                    type="button" 
-                                    className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2" 
-                                    style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }} 
-                                    onClick={() => handleSetPage(page + 1)} 
+                                <button
+                                    type="button"
+                                    className="btn fw-bold custom-hover d-flex align-items-center rounded-5 mx-1 p-sm-3 p-2"
+                                    style={{ backgroundColor: "#9e42f5", color: "white", border: "0" }}
+                                    onClick={() => handleSetPage(page + 1)}
                                     disabled={page === totalPages}
                                 >
                                     &gt;&gt;

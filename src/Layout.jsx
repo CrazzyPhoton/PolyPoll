@@ -1,5 +1,4 @@
-// Layout.jsx
-import {ScrollRestoration, Outlet } from 'react-router-dom'
+import { ScrollRestoration, Outlet } from 'react-router-dom'
 import { Navbar } from './components/Navbar.jsx'
 
 export function Layout() {

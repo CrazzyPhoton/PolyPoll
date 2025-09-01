@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useReadContract, useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { config } from "./config";
+import { config } from "../utils/config";
 import { polygon } from "viem/chains";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { PollConfigModal } from "./PollConfigModal";
 
-export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetchVotedPolls, refetchNotVotedPolls }) => {
+export function PollDetailsByIdOnLoad({ pollId, onLoaded, onVoteSuccess, refetchVotedPolls, refetchNotVotedPolls }) {
     const { data: pollIdDetails, isLoading, error, refetch: refetchPollIdDetails } = useReadContract({
         address: config.contractAddress,
         abi: config.contractABI,
@@ -200,7 +200,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetch
             refetchHasAddressVoted();
             refetchChoiceVoted();
             refetchPollIdDetails();
-            
+
             // Refetch voted and not voted polls arrays
             if (refetchVotedPolls) {
                 refetchVotedPolls();
@@ -208,7 +208,7 @@ export const PollDetailsByIdOnLoad = ({ pollId, onLoaded, onVoteSuccess, refetch
             if (refetchNotVotedPolls) {
                 refetchNotVotedPolls();
             }
-            
+
             // Notify parent component of successful vote with the pollId
             if (onVoteSuccess) {
                 onVoteSuccess(pollId);

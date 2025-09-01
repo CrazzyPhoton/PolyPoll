@@ -2,10 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { useAccount, useReadContract } from "wagmi";
 import { config } from "../utils/config";
 import { polygon } from "viem/chains";
-import { PollDetailsByIdOnLoad } from "../utils/PollDetailsByIdOnLoad";
+import { PollDetailsByIdOnLoad } from "../components/PollDetailsByIdOnLoad";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
-export const AllPolls = () => {
+export function AllPolls() {
     const [page, setPage] = useState(1);
     const paginationRef = useRef(null);
     const shouldScrollRef = useRef(false);
@@ -28,7 +28,7 @@ export const AllPolls = () => {
         address: config.contractAddress,
         abi: config.contractABI,
         functionName: "pollsVotedByAddress",
-        args: [account.address? account.address : "0x0000000000000000000000000000000000000000"],
+        args: [account.address ? account.address : "0x0000000000000000000000000000000000000000"],
         chainId: polygon.id
     })
 
@@ -36,7 +36,7 @@ export const AllPolls = () => {
         address: config.contractAddress,
         abi: config.contractABI,
         functionName: "pollsNotVotedByAddress",
-        args: [account.address? account.address : "0x0000000000000000000000000000000000000000"],
+        args: [account.address ? account.address : "0x0000000000000000000000000000000000000000"],
         chainId: polygon.id
     })
 
@@ -61,7 +61,7 @@ export const AllPolls = () => {
             setPage(1); // Reset to first page to show the newly voted poll
             // Clear search mode if active
             setIsInSearchMode(false);
-            
+
             // Navigate to the voted poll with pollId parameter
             navigate(`/all-polls?pollId=${votedPollId}`);
         }
@@ -147,7 +147,7 @@ export const AllPolls = () => {
             searchParams.delete("pollId");
             setSearchParams(searchParams);
         }
-        
+
         if (!isVotedPollsActive) {
             setIsNotVotedPollsActive(false);
             setPage(1); // Reset to first page when switching filters
@@ -162,7 +162,7 @@ export const AllPolls = () => {
             searchParams.delete("pollId");
             setSearchParams(searchParams);
         }
-        
+
         if (!isNotVotedPollsActive) {
             setIsVotedPollsActive(false);
             setPage(1); // Reset to first page when switching filters
@@ -209,10 +209,10 @@ export const AllPolls = () => {
         // Show all polls (default behavior or when searching) - already in descending order
         const pollsCreated = parseInt(_pollsCreated.toString(), 10);
         totalPolls = pollsCreated;
-        
+
         const startIndex = pollsCreated - (page - 1) * pollsPerPage;
         const endIndex = Math.max(startIndex - pollsPerPage + 1, 1);
-        
+
         for (let pollId = startIndex; pollId >= endIndex; pollId--) {
             currentPolls.push(pollId);
         }
@@ -344,8 +344,8 @@ export const AllPolls = () => {
                         className="d-flex align-items-center justify-content-center list-group-item h-auto pb-5 pt-3 border border-2 border-black rounded-5"
                         style={pollId === highlightedPollId ? { boxShadow: "0 0 12px 3px #9e42f5" } : {}}
                     >
-                        <PollDetailsByIdOnLoad 
-                            pollId={pollId} 
+                        <PollDetailsByIdOnLoad
+                            pollId={pollId}
                             onLoaded={pollId === highlightedPollId ? (id) => setLoadedPollId(id) : undefined}
                             onVoteSuccess={handleVoteSuccess}
                             refetchVotedPolls={refetchVotedPolls}
