@@ -1,5 +1,5 @@
 export const config = {
-	contractAddress: "0xCb9C24aDAB28C8a070741fEaEad6ab4f0ec5D83a",
+	contractAddress: import.meta.env.VITE_POLL_CONDUCTOR_V1_ADDRESS,
 	contractABI: [
 	{
 		"inputs": [],

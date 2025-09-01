@@ -8,15 +8,10 @@ import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 const queryClient = new QueryClient()
 
 // 1. Get projectId from https://cloud.reown.com
-const projectId = '981319680ad5a8fa20e2b994f4b6b6ba'
+const projectId = import.meta.env.VITE_REOWN_POLYPOLL_PROJECT_ID;
 
 // 2. Create a metadata object - optional
-const metadata = {
-  name: 'Polypoll',
-  description: 'Poll Creation and Management',
-  url: 'http://localhost:5173/', // origin must match your domain & subdomain
-  icons: ['https://assets.reown.com/reown-profile-pic.png']
-}
+const metadata = {}
 
 // 3. Set the networks
 const networks = [polygon]
