@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useReadContract, useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { config } from "../utils/config";
-import { domain } from "../utils/domain";
 import { polygon } from "viem/chains";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { PollConfigModal } from "./PollConfigModal";
@@ -251,7 +250,7 @@ export function PollDetailsByIdOnLoad({ pollId, onLoaded, onVoteSuccess, refetch
 
     const handleCopy = async () => {
         try {
-            await navigator.clipboard.writeText(`${domain}/all-polls?pollId=${pollId}`);  // Copies current URL; replace with any link string.
+            await navigator.clipboard.writeText(`${import.meta.env.VITE_POLYPOLL_DOMAIN}/all-polls?pollId=${pollId}`);  // Copies current URL; replace with any link string.
             setButtonText("Link Copied");
             setTimeout(() => {
                 setButtonText("Share");
