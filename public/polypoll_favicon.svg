@@ -1,8 +1,8 @@
 <svg width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Polypoll logo icon" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
-      .hex { stroke: #7B3FE4; stroke-width: 5; fill: #ffffffff; stroke-linejoin: round; }
-      .check { stroke: #7B3FE4; stroke-width: 5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .hex { stroke: #9e42f5; stroke-width: 5; fill: #ffffffff; stroke-linejoin: round; }
+      .check { stroke: #9e42f5; stroke-width: 5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
     </style>
   </defs>
   <!-- Hexagon (blockchain/network motif) -->
